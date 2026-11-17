@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.VrilLabs/vercel-oss-registry",
+  "title": "Vercel OSS Registry",
+  "description": "Search all 138 projects funded by the Vercel Open Source Program: repos, descriptions, topics.",
+  "version": "0.1.0",
+  "websiteUrl": "https://vercel-oss.vril.dev",
+  "repository": {
+    "url": "https://github.com/VrilLabs/vercel-oss-registry-mcp",
+    "source": "github"
+  },
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://vercel-oss.vril.dev/mcp"
+    }
+  ]
+}

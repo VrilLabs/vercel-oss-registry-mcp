@@ -19,7 +19,23 @@ Resources:
 
 All tools are read-only and idempotent and declare an `outputSchema`. List and read results include cache hints with a 1-day TTL.
 
-## Use
+## Connect
+
+The hosted endpoint uses Streamable HTTP and needs no auth:
+
+```
+https://vercel-oss.vril.dev/mcp
+```
+
+```bash
+claude mcp add --transport http vercel-oss https://vercel-oss.vril.dev/mcp
+```
+
+Cursor / VS Code / other clients: `{ "mcpServers": { "vercel-oss": { "url": "https://vercel-oss.vril.dev/mcp" } } }`
+
+The server is listed in the [MCP Registry](https://registry.modelcontextprotocol.io) as `io.github.VrilLabs/vercel-oss-registry`.
+
+## Develop
 
 ```bash
 pnpm install
@@ -47,4 +63,6 @@ Repos that no longer resolve or have changed hands (`warning` field) are hidden 
 
 ## Deploy
 
-`vercel deploy`: `api/index.ts` runs the Hono app on Fluid Compute (Node). Set `ALLOWED_HOSTS` to cover any custom domains.
+The app deploys to Vercel with zero config. `src/index.ts` default-exports a Hono app, which Vercel runs as a single Node.js function on Fluid compute (`vercel.json` sets `framework: "hono"`). The function only accepts requests whose Host header matches `vercel-oss.vril.dev` or one of the Vercel deployment URLs. Override the list with `ALLOWED_HOSTS` (comma-separated).
+
+Pushing a `v*` tag publishes `server.json` to the MCP Registry through GitHub OIDC (`.github/workflows/publish-mcp.yml`).

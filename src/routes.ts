@@ -13,11 +13,12 @@ export function createApp(opts: { allowedHosts?: string[] } = {}) {
     // Server Card (experimental SEP-2127) for discovery.
     const card = (base: string) => ({
         $schema: 'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
-        name: `io.github.vercel-oss-registry/${SERVER_NAME}`,
+        name: `io.github.VrilLabs/${SERVER_NAME}`,
         title: 'Vercel OSS Registry',
         version: SERVER_VERSION,
         description: `Search the ${catalog.count} projects funded by the Vercel Open Source Program.`,
         websiteUrl: catalog.source,
+        repository: { url: 'https://github.com/VrilLabs/vercel-oss-registry-mcp', source: 'github' },
         remotes: [{ type: 'streamable-http', url: `${base}/mcp` }]
     });
     app.get('/mcp/server-card', c => c.json(card(new URL(c.req.url).origin), 200, { 'cache-control': 'public, max-age=3600' }));

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "hono",
+  "fluid": true,
+  "headers": [
+    {
+      "source": "/(.well-known/mcp/server-card.json|mcp/server-card)",
+      "headers": [{ "key": "access-control-allow-origin", "value": "*" }]
+    }
+  ]
+}

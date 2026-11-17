@@ -1,5 +1,5 @@
-import MiniSearch from 'minisearch';
 import raw from '../data/catalog.json' with { type: 'json' };
+import { SearchIndex } from './search.ts';
 import type { Catalog, Project } from './types.ts';
 
 export const catalog = raw as Catalog;
@@ -13,13 +13,19 @@ export const warningFor = (p: Project): string | null =>
     : p.archived ? 'Repository is archived.'
     : null;
 
-const index = new MiniSearch<Project>({
-    fields: ['name', 'repo', 'topicText', 'description', 'language'],
-    extractField: (doc, field) =>
-        field === 'topicText' ? doc.topics.join(' ') : String((doc as unknown as Record<string, unknown>)[field] ?? ''),
-    searchOptions: { boost: { name: 4, repo: 2, topicText: 2.5, description: 1, language: 0.5 }, prefix: true, fuzzy: 0.2 }
-});
-index.addAll(catalog.projects);
+const index = new SearchIndex<Project>(
+    {
+        id: p => p.id,
+        fields: {
+            name: { get: p => p.name, boost: 4 },
+            repo: { get: p => p.repo, boost: 2 },
+            topics: { get: p => p.topics.join(' '), boost: 2.5 },
+            description: { get: p => p.description, boost: 1 },
+            language: { get: p => p.language ?? '', boost: 0.5 }
+        }
+    },
+    catalog.projects
+);
 
 export interface SearchParams {
     query?: string;
@@ -47,13 +53,12 @@ export function search(p: SearchParams): { total: number; hits: Project[]; mode:
     let list: Project[];
     const q = p.query?.trim();
     if (q) {
-        const run = (combineWith: 'AND' | 'OR') =>
-            index.search(q, { combineWith, filter: r => pass(byId.get(r.id as string)!) }).map(r => byId.get(r.id as string)!);
-        list = run('AND');
+        const run = (all: boolean) => index.search(q, { all, filter: id => pass(byId.get(id)!) }).map(r => byId.get(r.id)!);
+        list = run(true);
         mode = 'and';
         // Fall back to OR so multi-word queries still return the closest matches.
         if (list.length === 0) {
-            list = run('OR');
+            list = run(false);
             mode = 'or';
         }
     } else {
@@ -69,7 +74,7 @@ export function search(p: SearchParams): { total: number; hits: Project[]; mode:
 
 /** Closest ids for a miss — powers "did you mean". */
 export function suggestIds(input: string, n = 3): string[] {
-    return index.search(input.replace(/[/_-]/g, ' '), { combineWith: 'OR' }).slice(0, n).map(r => r.id as string);
+    return index.search(input, { all: false }).slice(0, n).map(r => r.id);
 }
 
 export type Facet = 'topic' | 'language' | 'cohort';

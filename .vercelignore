@@ -1,0 +1,9 @@
+refs
+.remember
+dist
+test
+scripts
+.github
+*.md
+.env*
+.DS_Store

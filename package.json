@@ -1,0 +1,35 @@
+{
+  "name": "vercel-oss-registry-mcp",
+  "version": "0.1.0",
+  "description": "MCP server: searchable catalog of every project in the Vercel Open Source Program",
+  "type": "module",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "bin": { "vercel-oss-registry-mcp": "dist/src/stdio.js" },
+  "files": ["dist"],
+  "scripts": {
+    "catalog": "tsx scripts/build-catalog.ts",
+    "dev": "tsx watch src/http.ts",
+    "stdio": "tsx src/stdio.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "catalog:check": "tsx scripts/build-catalog.ts --check",
+    "test": "vitest run",
+    "inspect": "npx @modelcontextprotocol/inspector tsx src/stdio.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.0",
+    "@modelcontextprotocol/hono": "^2.0.2",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "hono": "^4.13.19",
+    "minisearch": "^7.2.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^6.0.0",
+    "vitest": "^4.0.0"
+  }
+}

@@ -1,0 +1,25 @@
+name: Refresh catalog
+on:
+  schedule: [{ cron: '0 6 * * 1' }]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm catalog
+        env: { GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }
+      - run: pnpm typecheck && pnpm test
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/catalog-refresh
+          title: 'chore: refresh Vercel OSS catalog'
+          commit-message: 'chore: refresh Vercel OSS catalog'
+          add-paths: data/catalog.json

@@ -85,7 +85,7 @@ const asMarkdown = (p: Project) =>
         `- Language: ${p.language ?? '—'} · License: ${p.license ?? '—'} · ★ ${p.stars} · Cohort: ${p.cohort}`,
         warningFor(p) && `- ⚠️ ${warningFor(p)}`
     ]
-        .filter(l => l !== null && l !== '')
+        .filter((l): l is string => typeof l === 'string')
         .join('\n');
 
 // ── server ──────────────────────────────────────────────────────────────────

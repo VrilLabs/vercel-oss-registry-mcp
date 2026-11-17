@@ -3,7 +3,7 @@
 import { Hono } from 'hono';
 import { createApp } from './routes.ts';
 
-const DEFAULT_HOSTS = ['vercel-oss.vril.dev'];
+const DEFAULT_HOSTS = ['vercel-oss.vril.dev', 'vercel-oss-registry-mcp.vercel.app'];
 const allowedHosts = [
     ...(process.env.ALLOWED_HOSTS?.split(',').map(h => h.trim()).filter(Boolean) ?? DEFAULT_HOSTS),
     process.env.VERCEL_URL,
